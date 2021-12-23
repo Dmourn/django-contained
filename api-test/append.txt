@@ -1,0 +1,63 @@
+import os
+INSTALLED_APPS += ['api.apps.ApiConfig', 'clockify.apps.ClockifyConfig', 'oauth2_provider', 'corsheaders', 'rest_framework', 'rest_framework.authtoken']
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+]
+#You may want cors, have to add domains
+CORS_ALLOWED_ORGINS = [
+
+]
+DATABASES = {
+	'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['API_PG_DBNAME'],
+        'USERNAME': os.environ['API_PG_USER'],
+        'PASSWORD': os.environ['API_PG_PASSWORD'],
+        'HOST': os.environ['API_PG_DBHOST'],
+        'PORT': '5432',
+    }
+}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/home/userman/logs/django/djangodebug.log',
+        },
+        },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'contacts': 'Access to your contacts', 'accounts': 'Access to your accounts'},
+    'DEFAULT_SCOPES': {'read','write', 'contacts'},
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+		#'rest_framework.authentication.BasicAuthentication',
+		'rest_framework.authentication.SessionAuthentication',
+		#'rest_framework.authentication.TokenAuthentication',
+		'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+		],
+	# Proper Permissions classes could be made, keeps you from adding it to every view
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
