@@ -23,8 +23,10 @@ from .auth.clockify import ClockifyAuthentication
 
 #Zoho Contacct
 class ContactsList(APIView):
-    authentication_classes = [SessionAuthentication, OAuth2Authentication]
-    permission_classes = [TokenHasReadWriteScope]
+    #authentication_classes = [SessionAuthentication, OAuth2Authentication]
+    #permission_classes = [TokenHasReadWriteScope]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         contacts = Contacts.objects.all()
@@ -48,8 +50,8 @@ class ContactsList(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 #Zoho Account
 class AccountsList(APIView):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasReadWriteScope]
+    authentication_classes = [OAuth2Authentication, TokenAuthentication]
+    permission_classes = [TokenHasReadWriteScope|permissions.IsAuthenticated]
 
     def get(self, request, **kwargs):
         data = request.data
@@ -82,8 +84,8 @@ class AccountsList(APIView):
 
 #class AccountsDetailView(generics.GenericAPIView):
 class AccountsDetailView(generics.RetrieveAPIView):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasReadWriteScope]
+    authentication_classes = [OAuth2Authentication, TokenAuthentication]
+    permission_classes = [TokenHasReadWriteScope|permissions.IsAuthenticated]
     lookup_field = 'account_id'
     queryset = Accounts.objects.all()
     serializer_class = AccountsSerializer

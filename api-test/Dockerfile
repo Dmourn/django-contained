@@ -1,20 +1,22 @@
-FROM registry.fedoraproject.org/fedora:latest
+FROM ubuntu:22.04
 
-RUN ["dnf", "upgrade", "-y"]
-RUN ["dnf", "install", "-y", "openssl", "python3-devel", "libpq-devel", "gcc", "make"]
-RUN ["adduser", "-m", "userman"]
+ENV DEBIAN_FRONTEND=noninteractive
+RUN ["apt", "update"]
+RUN ["apt", "upgrade", "-y"]
+RUN ["apt", "install", "-y", "bash", "util-linux", "libssl-dev", "openssl", "python3-venv", "python3-dev", "libpq-dev", "gcc", "make", "postgresql"]
+RUN ["useradd", "-m", "userman", "-s", "/bin/bash"]
 
 #uwsgi should be built from source in prod
-RUN ["sh","-c", "su userman -c 'python3 -m venv /home/userman/menv && source /home/userman/menv/bin/activate && pip install --no-cache -U pip && pip install --no-cache django uwsgi psycopg2 djangorestframework django-oauth-toolkit django-cors-headers'"]
-RUN ["sh", "-c", "su userman -c 'source /home/userman/menv/bin/activate && cd /home/userman && django-admin startproject mysite && mkdir -p /home/userman/logs/django'"]
+RUN ["bash","-c", "su userman -s /bin/bash -c 'python3 -m venv /home/userman/menv && source /home/userman/menv/bin/activate && pip install --no-cache -U pip && pip install --no-cache django uwsgi psycopg2 djangorestframework django-oauth-toolkit django-cors-headers'"]
+RUN ["bash", "-c", "su userman -s /bin/bash -c 'source /home/userman/menv/bin/activate && cd /home/userman && django-admin startproject mysite && mkdir -p /home/userman/logs/django'"]
 
 RUN ["sed", "-i", "-e","s|DEBUG = True|DEBUG = False|", "/home/userman/mysite/mysite/settings.py"]
 
 #Insert your Domain here
-RUN ["sh", "-c", "echo ALLOWED_HOSTS += [\\'127.0.0.1\\',\\'0.0.0.0\\'] >> /home/userman/mysite/mysite/settings.py"]
+RUN ["bash", "-c", "echo ALLOWED_HOSTS += [\\'127.0.0.1\\',\\'0.0.0.0\\'] >> /home/userman/mysite/mysite/settings.py"]
 
-RUN ["dnf", "remove", "-y", "gcc", "make"]
-RUN ["dnf", "clean", "all"]
+RUN ["apt", "remove", "-y", "gcc", "make"]
+RUN ["apt-get", "clean"]
 COPY --chown=userman:userman uwsgi.ini /home/userman/mysite/uwsgi.ini
 COPY --chown=userman:userman mysite/urls.py /home/userman/mysite/mysite/urls.py
 COPY --chown=userman:userman api /home/userman/mysite/api
