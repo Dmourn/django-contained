@@ -13,9 +13,9 @@ RUN ["bash", "-c", "su userman -s /bin/bash -c 'source /home/userman/menv/bin/ac
 RUN ["sed", "-i", "-e","s|DEBUG = True|DEBUG = False|", "/home/userman/mysite/mysite/settings.py"]
 
 #Insert your Domain here
-RUN ["bash", "-c", "echo ALLOWED_HOSTS += [\\'127.0.0.1\\',\\'0.0.0.0\\'] >> /home/userman/mysite/mysite/settings.py"]
+RUN ["bash", "-c", "echo ALLOWED_HOSTS += [\\'api\\',\\'127.0.0.1\\',\\'0.0.0.0\\'] >> /home/userman/mysite/mysite/settings.py"]
 
-RUN ["apt", "remove", "-y", "gcc", "make"]
+RUN ["apt", "remove", "-y", "--auto-remove", "gcc", "make"]
 RUN ["apt-get", "clean"]
 COPY --chown=userman:userman uwsgi.ini /home/userman/mysite/uwsgi.ini
 COPY --chown=userman:userman mysite/urls.py /home/userman/mysite/mysite/urls.py

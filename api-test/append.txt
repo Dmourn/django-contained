@@ -17,10 +17,10 @@ CORS_ALLOWED_ORGINS = [
 DATABASES = {
 	'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['API_PG_DBNAME'],
-        'USERNAME': os.environ['API_PG_USER'],
-        'PASSWORD': os.environ['API_PG_PASSWORD'],
-        'HOST': os.environ['API_PG_DBHOST'],
+        'NAME': os.environ['PG_DBNAME'],
+        'USERNAME': os.environ['PG_USER'],
+        'PASSWORD': os.environ['PG_PASSWORD'],
+        'HOST': os.environ['PG_DBHOST'],
         'PORT': '5432',
     }
 }

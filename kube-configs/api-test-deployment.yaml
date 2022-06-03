@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: api-deployment
+  labels:
+    app: api-test
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: api-test
+  template:
+    metadata:
+      labels:
+        app: api-test
+    spec:
+      containers:
+        - name: api-test-cont
+          image: registry.digitalocean.com/sassafras/api-test:latest
+          env:
+            - name: PG_DBHOST
+              value: pg-db
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-test-secret
+                  key: dj-pg-password
+            - name: PG_DBNAME
+              valueFrom:
+                secretKeyRef:
+                  name: my-test-secret
+                  key: dj-pg-dbname
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-test-secret
+                  key: username
+        - name: nginx-cont 
+          image: registry.digitalocean.com/sassafras/nginx-alpine:latest
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP

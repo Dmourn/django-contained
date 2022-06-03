@@ -39,35 +39,28 @@ deactivate nondestructive
 
 VIRTUAL_ENV="/home/userman/menv"
 export VIRTUAL_ENV
-
-API_PG_DBNAME="userman"
-export API_PG_DBNAME
-if [[ -z $API_PG_DBNAME && -n $DJ_DB_NAME ]]
-	then
-	export API_PG_DBNAME=$DJ_DB_NAME
-fi
-
-# DNS hasn't worked on my local 
-#API_PG_DBHOST="time-pg"
-API_PG_DBHOST="localhost"
-export API_PG_DBHOST
-
-API_PG_USER="userman"
-export API_PG_USER
-
 # Podman puts secret in /run/secrets/secret-name
 # Kubernetes stores named fields in secrests, so /run/secrets/secret-name/field-name
-# API_PG_PASSWORD=$(cat /run/secrets/api-pg-secrets/api-pg-password)
-# I should make this an if [ -n $ENV ]
-if [[ -f /run/secrets/api-pg-password ]]; then
-	export API_PG_PASSWORD=$(cat /run/secrets/api-pg-password 2>/dev/null)
-fi
+# if [[ -f /run/secrets/api-pg-password ]]; then
+#	export PG_PASSWORD=$(cat /run/secrets/api-pg-password 2>/dev/null)
+# fi
 
 #IF no secret, we need env var, should make a test here
-if [[ -z $API_PG_PASSWORD && -n $DJ_DB_PASSWORD ]] ; then
-	#API_PG_PASSWORD
-	export API_PG_PASSWORD=$DJ_DB_PASSWORD ; else
-	echo 'No DB PASSword';
+
+if [[ -n $DJ_PG_DBHOST ]]; then
+	export PG_DBHOST=$DJ_PG_DBHOST
+fi
+
+if [[ -n $DJ_PG_USER ]]; then
+	export PG_USER=$DJ_PG_USER
+fi
+
+if [[ -n $DJ_DB_NAME ]]; then
+	export PG_DBNAME=$DJ_DB_NAME
+fi
+
+if [[ -n $DJ_DB_PASSWORD ]] ; then
+	export PG_PASSWORD=$DJ_DB_PASSWORD
 fi
 
 

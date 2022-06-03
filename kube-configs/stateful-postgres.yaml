@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pg-pod
+  name: pg-db
+spec:
+  selector:
+    app: pg-pod
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: default
+  name: stateful-pg
+  labels:
+    app: pg-pod
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  serviceName: pg-db
+  selector:
+    matchLabels:
+      app: pg-pod
+  template:
+    metadata:
+      labels:
+        app: pg-pod
+    spec:
+      containers:
+        - name: pg-cont
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+              name: psql
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-test-secret
+                  key: username
+            - name: POSTGRES_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: my-test-secret
+                  key: dj-pg-dbname
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-test-secret
+                  key: dj-pg-password
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "scram-sha-256"
