@@ -17,7 +17,6 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: default
   name: stateful-pg
   labels:
     app: pg-pod

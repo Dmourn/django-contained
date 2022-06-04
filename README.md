@@ -4,10 +4,9 @@ Running django in containers.
 
 Originally made for testing Clockify with some other services. With a few lines of code it can be made to work with clockify, but the main purpose was to test authentication/integration between different api's. I cut a decent amount out, but should be functional.
 
-
+Now it's just a repo to play around with stuff :)
 
 ## Usage
-I use podman, but I will add
 
 If you use docker, you can replace podman with docker for most things with no issue.
 I will try to fix my bootleg-compose script to work with docker.
@@ -30,7 +29,7 @@ This creates a pod with port 8080 exposed, add all the containers, and allows yo
 
 ## Test the api
 
-Classic token auth is present but conflicts with the hard requirements of the dj-oath-toolkit.
+Classic token auth is present but conflicts with the permission classes of the dj-oath-toolkit.
 
 1. Go to admin dashboard, add a normal user (you can skip this just add for testing).
 

@@ -1,0 +1,13 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: api-test-cont
+          env:
+            - name: PG_DBHOST
+              value: $(POSTGRESS_SERVICE)
